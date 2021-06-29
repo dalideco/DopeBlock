@@ -1,5 +1,11 @@
-const Discord = require('discord.js')
+require('dotenv').config();
+const {kicking, changeKicking}  = require('./config')
+
+const Discord = require('discord.js');
+const kick = require('./kick');
 const client =new Discord.Client(); 
+
+const targetId = "235088799074484224"
 
 client.on('ready',()=>{
   console.log(`logged in as ${client.user.tag}`)
@@ -7,28 +13,20 @@ client.on('ready',()=>{
   // console.log(client.channels.cache.get("859216707276767232"))
 })
 
-const prefix="$kick-dope"
+const kickprefix="$kick-dope"
 
-client.on('message', message=>{
-  if (!message.content.startsWith(prefix) || message.author.bot) return;
+client.on('message', async(message)=>{
+  kick(message, targetId,kickprefix);
 
-	// const args = message.content.slice(prefix.length).trim().split(/ +/);
-	// const mention = args.shift().toLowerCase();
-  // console.log(mention)
-  
-
-  const taggedUser = message.mentions.users.first();
-  if(taggedUser){
-    const user = message.guild.members.cache.get(taggedUser.id)
-    console.log(user);
-    user.voice.setChannel(null);
-    message.channel.send(`You wanted to kick: ${taggedUser.username}`);
-  }
-	else{
-    message.reply("you need to tage a user ")
+  if(message.content ==="$stop"){
+    if(!message.member.hasPermission("ADMINISTRATOR")){
+      message.reply("you need to be an administrator to use this command");
+      return ;
+    }
+    changeKicking(false);
+    message.reply(`setting kicking to ${kicking}`)
   }
 })
-
 
 
 
